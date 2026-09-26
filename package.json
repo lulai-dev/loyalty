@@ -1,0 +1,26 @@
+{
+  "name": "lealtad-plataforma",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Plataforma multi-negocio de tarjetas de lealtad para Apple Wallet y Google Wallet",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "crear-usuario": "node scripts/crear-usuario.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
+    "bcryptjs": "^2.4.3",
+    "google-auth-library": "^9.15.0",
+    "jose": "^5.9.6",
+    "jsonwebtoken": "^9.0.2",
+    "next": "^14.2.21",
+    "passkit-generator": "^3.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
