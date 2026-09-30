@@ -26,6 +26,22 @@ export async function POST(req) {
   const ses = await getSession();
   if (!ses) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   try {
+    // Límite de negocios por cuenta (max_negocios en la tabla usuarios;
+    // 1 por defecto — los dueños administran UN negocio; tu cuenta admin
+    // puede tener más).
+    const [limite] = await sql`
+      SELECT u.max_negocios, COUNT(n.id)::int AS actuales
+      FROM usuarios u LEFT JOIN negocios n ON n.usuario_id = u.id
+      WHERE u.id = ${ses.uid}
+      GROUP BY u.max_negocios
+    `;
+    if (limite && limite.actuales >= limite.max_negocios) {
+      return NextResponse.json(
+        { error: "Tu cuenta ya tiene su negocio registrado. Contacta al administrador si necesitas otro." },
+        { status: 403 }
+      );
+    }
+
     const { nombre, slug, giro, pin } = await req.json();
     const cleanSlug = String(slug || "")
       .toLowerCase()
