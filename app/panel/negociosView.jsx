@@ -106,14 +106,34 @@ export default function NegociosView() {
                 </a>
               </div>
             </div>
-            <div style={{ marginTop: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <div style={{ marginTop: 12, display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
               {n.programas.map((p) => (
                 <Link key={p.id} href={`/panel/programa/${p.id}`} style={{ textDecoration: "none" }}>
-                  <span className="pill" style={{ cursor: "pointer" }}>
-                    {p.nombre} · {p.meta} sellos → {p.premio} {p.activo ? "" : "(inactivo)"}
+                  <span
+                    className="pill"
+                    style={{ cursor: "pointer", opacity: p.activo ? 1 : 0.55 }}
+                  >
+                    {p.nombre} · {p.meta} sellos → {p.premio} {p.activo ? "" : "· INACTIVA"}
                   </span>
                 </Link>
               ))}
+              <button
+                className="sec"
+                style={{ padding: "4px 10px", fontSize: ".78rem", borderRadius: 999 }}
+                onClick={async () => {
+                  const nombre = prompt("Nombre de la nueva tarjeta (ej. Tarjeta latte):");
+                  if (!nombre) return;
+                  const r = await fetch("/api/panel/programas", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ negocio_id: n.id, nombre }),
+                  });
+                  if (r.ok) cargar();
+                  else alert((await r.json()).error || "Error");
+                }}
+              >
+                + Nueva tarjeta
+              </button>
             </div>
           </div>
         ))}

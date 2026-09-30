@@ -201,6 +201,7 @@ function Disenador({ pr, onSaved }) {
   const [d, setD] = useState({ ...D, ...(pr.diseno || {}) });
   const [meta, setMeta] = useState(pr.meta);
   const [premio, setPremio] = useState(pr.premio);
+  const [activo, setActivo] = useState(pr.activo);
   const [msg, setMsg] = useState(null);
   const [busy, setBusy] = useState(false);
 
@@ -227,7 +228,7 @@ function Disenador({ pr, onSaved }) {
     const r = await fetch("/api/panel/programas", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: pr.id, meta: parseInt(meta, 10), premio, diseno: d }),
+      body: JSON.stringify({ id: pr.id, meta: parseInt(meta, 10), premio, activo, diseno: d }),
     });
     const data = await r.json();
     setMsg(
@@ -278,7 +279,24 @@ function Disenador({ pr, onSaved }) {
           placeholder={`Junta ${meta} sellos y llévate ${premio}…`}
           onChange={(e) => setD({ ...d, como: e.target.value || null })}
         />
-        <button disabled={busy} style={{ width: "100%", marginTop: 16 }} onClick={guardar}>
+        <label
+          className="field"
+          style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 16, cursor: "pointer" }}
+        >
+          <input
+            type="checkbox"
+            checked={activo}
+            onChange={(e) => setActivo(e.target.checked)}
+            style={{ width: "auto" }}
+          />
+          Tarjeta activa (los clientes nuevos se registran en ella)
+        </label>
+        <p style={{ fontSize: ".78rem", color: "#8a8578", marginTop: 4 }}>
+          Al desactivarla, las tarjetas ya emitidas siguen funcionando (sellar y canjear),
+          pero el registro público usa la siguiente tarjeta activa del negocio. Así cambias
+          de promo sin afectar a quien va a la mitad.
+        </p>
+        <button disabled={busy} style={{ width: "100%", marginTop: 12 }} onClick={guardar}>
           Guardar diseño
         </button>
         {msg && (
